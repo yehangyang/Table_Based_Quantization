@@ -11,13 +11,24 @@ class _SymmetryQuant(torch.nn.Module):
                  bit: int,
                  narrow: bool = False,
                  output_amax: float = None) -> None:
+        """Initialize quant-input to quant-output mapping table for symmetry quantization.
+
+        Args:
+            func (Callable): corresponding standard floating-point function
+            input_amax (float): the amax of input for quantization
+            bit (int): the bit number
+            narrow (bool, optional): True: quant_min = -2^(bit - 1) + 1. Defaults to False, quant_min = -2^(bit - 1)
+            output_amax (float, optional): the amax of output for quantization.
+                                           Defaults to None, the amax = amax(nonlinear(DQ(quant_input)))
+        """
         super().__init__()
         self.__input_scale = input_amax / quant_max(bit)
         input_quant = torch.arange(quant_min(bit, narrow), quant_max(bit) + 1, dtype=torch.int8)
         input_float = input_quant * self.__input_scale
 
         output_float = func(input_float)
-        self.__output_scale = (output_amax if output_amax else torch.absolute(output_float).max()) / quant_max(bit)
+        output_amax = output_amax if output_amax else torch.absolute(output_float).max()
+        self.__output_scale = output_amax / quant_max(bit)
         output_quant = quantize(output_float, self.__output_scale, bit, narrow)
 
         index = quant_max(bit) if narrow else quant_max(bit) + 1

@@ -22,15 +22,18 @@ class _SymmetryQuant(torch.nn.Module):
                                            Defaults to None, the amax = amax(nonlinear(DQ(quant_input)))
         """
         super().__init__()
+        # (input_quant) -> DQ -> (input_float)
         self.__input_scale = input_amax / quant_max(bit)
         input_quant = torch.arange(quant_min(bit, narrow), quant_max(bit) + 1, dtype=torch.int8)
         input_float = input_quant * self.__input_scale
 
+        # (input_float) -> float_func -> Q -> (output_quant)
         output_float = func(input_float)
         output_amax = output_amax if output_amax else torch.absolute(output_float).max()
         self.__output_scale = output_amax / quant_max(bit)
         output_quant = quantize(output_float, self.__output_scale, bit, narrow)
 
+        # adjust sequence of output_quant for easier retrieve
         index = quant_max(bit) if narrow else quant_max(bit) + 1
         self._table = torch.cat((output_quant[index:], output_quant[:index]))
 

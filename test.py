@@ -23,11 +23,11 @@ def __check_symmetric_quant(quant_cls: _SymmetryQuant, float_func: Callable, inp
     input_shape = (1, 128)
     quant_input = torch.randint(utils.quant_min(bit, narrow), utils.quant_max(bit) + 1, input_shape, dtype=torch.int8)
 
-    # quant_input -> quant_func -> quant_output
+    # (quant_input) -> quant_func -> (quant_output)
     quant_func = quant_cls(input_amax, bit, narrow)
     quant_output = quant_func(quant_input)
 
-    # quant_input -> DQ -> float_func -> Q -> quant_output
+    # (quant_input) -> DQ -> float_func -> Q -> (quant_output)
     ground_truth_float_input = utils.dequantize(quant_input, quant_func.input_scale)
     ground_truth_float_output = float_func(ground_truth_float_input)
     ground_truth_quant_output = utils.quantize(ground_truth_float_output, quant_func.output_scale, bit, narrow)

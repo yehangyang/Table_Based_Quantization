@@ -3,14 +3,15 @@ import torch
 from .utils import quant_min, quant_max, quantize
 
 
-class _SymmetryQuant(torch.nn.Module):
+class _SymmetryQuantTable(torch.nn.Module):
 
     def __init__(self,
                  func: Callable,
                  input_amax: float,
                  bit: int,
                  narrow: bool = False,
-                 output_amax: float = None) -> None:
+                 output_amax: float = None,
+                 output_unsign: bool = False) -> None:
         """Initialize quant-input to quant-output mapping table for symmetry quantization.
 
         Args:
@@ -20,6 +21,7 @@ class _SymmetryQuant(torch.nn.Module):
             narrow (bool, optional): True: quant_min = -2^(bit - 1) + 1. Defaults to False, quant_min = -2^(bit - 1)
             output_amax (float, optional): the amax of output for quantization.
                                            Defaults to None, the amax = amax(nonlinear(DQ(quant_input)))
+            output_unsign(bool, optional): True: quant_output is in unsign integer, False is Default, in sign integer
         """
         super().__init__()
         # (input_quant) -> DQ -> (input_float)
@@ -30,8 +32,8 @@ class _SymmetryQuant(torch.nn.Module):
         # (input_float) -> float_func -> Q -> (output_quant)
         output_float = func(input_float)
         output_amax = output_amax if output_amax else torch.absolute(output_float).max()
-        self.__output_scale = output_amax / quant_max(bit)
-        output_quant = quantize(output_float, self.__output_scale, bit, narrow)
+        self.__output_scale = output_amax / quant_max(bit, output_unsign)
+        output_quant = quantize(output_float, self.__output_scale, bit, narrow, output_unsign)
 
         # adjust sequence of output_quant for easier retrieve
         index = quant_max(bit) if narrow else quant_max(bit) + 1
@@ -50,13 +52,27 @@ class _SymmetryQuant(torch.nn.Module):
         return self.__output_scale
 
 
-class Sigmoid(_SymmetryQuant):
+class Sigmoid(_SymmetryQuantTable):
+    support_unsign = True
 
-    def __init__(self, input_amax: float, bit: int, narrow: bool = False, output_amax: float = None) -> None:
-        super().__init__(torch.sigmoid, input_amax, bit, narrow, output_amax)
+    def __init__(self,
+                 input_amax: float,
+                 bit: int,
+                 narrow: bool = False,
+                 output_amax: float = None,
+                 output_unsign: bool = False,
+                 *args,
+                 **kwargs) -> None:
+        super().__init__(torch.sigmoid, input_amax, bit, narrow, output_amax, output_unsign)
 
 
-class TanH(_SymmetryQuant):
+class TanH(_SymmetryQuantTable):
 
-    def __init__(self, input_amax: float, bit: int, narrow: bool = False, output_amax: float = None) -> None:
-        super().__init__(torch.tanh, input_amax, bit, narrow, output_amax)
+    def __init__(self,
+                 input_amax: float,
+                 bit: int,
+                 narrow: bool = False,
+                 output_amax: float = None,
+                 *args,
+                 **kwargs) -> None:
+        super().__init__(torch.tanh, input_amax, bit, narrow, output_amax, output_unsign=False)

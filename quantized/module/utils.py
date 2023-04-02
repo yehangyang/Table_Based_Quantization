@@ -1,18 +1,25 @@
 import torch
 
 
+def quant_max(bit: int, unsign: bool):
+    return (1 << bit) - 1 if unsign else (1 << (bit - 1)) - 1
+
+
 class QuantConfig:
 
-    def __init__(self, amax: float, bit: int, narrow: bool, unsign: bool) -> None:
+    def __init__(self, bit: int, narrow: bool, unsign: bool, amax: float = None, scale: float = None) -> None:
         if bit > 8:
-            assert (unsign == False)
+            assert (unsign is False)
         else:
             assert (unsign in (False, True))
 
-        self._amax = amax
+        assert (any((amax, scale)))
+
         self._bit = bit
         self._narrow = narrow
         self._unsign = unsign
+        self._amax = amax
+        self._scale = scale
 
     @property
     def quant_min(self):
@@ -23,11 +30,11 @@ class QuantConfig:
 
     @property
     def quant_max(self):
-        return (1 << self._bit) - 1 if self._unsign else (1 << (self._bit - 1)) - 1
+        return quant_max(self._bit, self._unsign)
 
     @property
     def scale(self):
-        return self._amax / self.quant_max
+        return self._scale if self._scale else self._amax / self.quant_max
 
     @property
     def dtype(self):
@@ -43,6 +50,9 @@ class QuantConfig:
     @property
     def range(self):
         return torch.arange(self.quant_min, self.quant_max + 1, dtype=self.dtype)
+
+    def set_scale(self, scale: float) -> None:
+        self._scale = scale
 
     def randint(self, shape):
         return torch.randint(self.quant_min, self.quant_max + 1, shape, dtype=self.dtype)

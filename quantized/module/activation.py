@@ -52,11 +52,11 @@ class _SymmetryQuant(torch.nn.Module):
 
 class Sigmoid(_SymmetryQuant):
 
-    def __init__(self, input_amax: float, bit: int, narrow: bool = False) -> None:
-        super().__init__(torch.sigmoid, input_amax, bit, narrow, 1.0)
+    def __init__(self, input_amax: float, bit: int, narrow: bool = False, output_amax: float = None) -> None:
+        super().__init__(torch.sigmoid, input_amax, bit, narrow, output_amax)
 
 
 class TanH(_SymmetryQuant):
 
-    def __init__(self, input_amax: float, bit: int, narrow: bool = False) -> None:
-        super().__init__(torch.tanh, input_amax, bit, narrow, 1.0)
+    def __init__(self, input_amax: float, bit: int, narrow: bool = False, output_amax: float = None) -> None:
+        super().__init__(torch.tanh, input_amax, bit, narrow, output_amax)

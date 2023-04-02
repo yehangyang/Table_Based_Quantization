@@ -6,8 +6,8 @@ from quantized.module import utils
 from quantized.module.activation import _SymmetryQuant, Sigmoid, TanH
 
 
-def __check_symmetric_quant(quant_cls: _SymmetryQuant, float_func: Callable, input_amax: float, bit: int,
-                            narrow: bool) -> bool:
+def __check_symmetric_quant(quant_cls: _SymmetryQuant, float_func: Callable, input_amax: float, bit: int, narrow: bool,
+                            output_amax: float) -> bool:
     """Check whether the output of quant_cls is correct
 
     Args:
@@ -24,7 +24,7 @@ def __check_symmetric_quant(quant_cls: _SymmetryQuant, float_func: Callable, inp
     quant_input = torch.randint(utils.quant_min(bit, narrow), utils.quant_max(bit) + 1, input_shape, dtype=torch.int8)
 
     # (quant_input) -> quant_func -> (quant_output)
-    quant_func = quant_cls(input_amax, bit, narrow)
+    quant_func = quant_cls(input_amax, bit, narrow, output_amax)
     quant_output = quant_func(quant_input)
 
     # (quant_input) -> DQ -> float_func -> Q -> (quant_output)
@@ -36,14 +36,16 @@ def __check_symmetric_quant(quant_cls: _SymmetryQuant, float_func: Callable, inp
     return (quant_output == ground_truth_quant_output).all()
 
 
-def _check_symmetric_quant(quant_cls: _SymmetryQuant, float_func: Callable, input_amax_range: tuple):
+def _check_symmetric_quant(quant_cls: _SymmetryQuant, float_func: Callable, input_amax_range: tuple,
+                           output_amax_range: tuple):
     for _ in range(100):
         for input_amax in input_amax_range:
             for bit in (4, 8):
                 for narrow in (True, False):
-                    if not __check_symmetric_quant(quant_cls, float_func, input_amax, bit, narrow):
-                        print(f'input_amax = {input_amax}, bit = {bit}, narrow = {narrow} is FAIL!')
-                        return False
+                    for output_amax in output_amax_range:
+                        if not __check_symmetric_quant(quant_cls, float_func, input_amax, bit, narrow, output_amax):
+                            print(f'input_amax = {input_amax}, bit = {bit}, narrow = {narrow} is FAIL!')
+                            return False
 
     return True
 
@@ -51,10 +53,10 @@ def _check_symmetric_quant(quant_cls: _SymmetryQuant, float_func: Callable, inpu
 class TestActivation(unittest.TestCase):
 
     def test_sigmoid(self):
-        self.assertEqual(_check_symmetric_quant(Sigmoid, torch.sigmoid, (4, 5, 6, 7, 8)), True)
+        self.assertEqual(_check_symmetric_quant(Sigmoid, torch.sigmoid, (4, 5, 6, 7, 8), (0.5, 1, 1.5, None)), True)
 
     def test_tanh(self):
-        self.assertEqual(_check_symmetric_quant(TanH, torch.tanh, (2, 3, 4, 5, 6)), True)
+        self.assertEqual(_check_symmetric_quant(TanH, torch.tanh, (2, 3, 4, 5, 6), (0.5, 1, 1.5, None)), True)
 
 
 if __name__ == '__main__':

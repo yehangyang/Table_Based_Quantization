@@ -1,4 +1,4 @@
-from typing import Callable, Tuple
+from typing import Callable
 import torch
 from .utils import QuantConfig
 
@@ -18,12 +18,14 @@ class _SymmetryQuantTable(torch.nn.Module):
 
         Args:
             func (Callable): corresponding standard floating-point function
-            input_amax (float): the amax of input for quantization
-            bit (int): the bit number
-            narrow (bool, optional): True: quant_min = -2^(bit - 1) + 1. Defaults to False, quant_min = -2^(bit - 1)
+            input_bit (int): bit number of input for quantization
+            input_amax (float): amax of input for quantization
+            input_unsign (bool): True: quant_input is in unsign integer, False is Default, in sign integer
+            output_bit (int): bit number of output for quantization
             output_amax (float, optional): the amax of output for quantization.
-                                           Defaults to None, the amax = amax(nonlinear(DQ(quant_input)))
-            output_unsign(bool, optional): True: quant_output is in unsign integer, False is Default, in sign integer
+                                           Defaults to None, = amax(nonlinear(DQ(quant_input)))
+            output_unsign (bool, optional): True: quant_input is in unsign integer, False is Default, in sign integer. Defaults to False.
+            narrow (bool, optional): True: quant_min = -2^(bit - 1) + 1, False: quant_min = -2^(bit - 1). Defaults to False.
         """
         super().__init__()
         assert (input_bit <= 8)

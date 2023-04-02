@@ -6,15 +6,15 @@ from quantized.module import utils
 from quantized.module.activation import _SymmetryQuantTable, Sigmoid, TanH
 
 
-def __check_symmetric_quant(quant_cls: _SymmetryQuantTable,
-                            float_func: Callable,
-                            input_bit: int,
-                            input_amax: float,
-                            input_unsign: bool,
-                            output_bit: int,
-                            output_amax: float = None,
-                            output_unsign: bool = False,
-                            narrow: bool = False) -> bool:
+def __check_symmetric_quant_table(quant_cls: _SymmetryQuantTable,
+                                  float_func: Callable,
+                                  input_bit: int,
+                                  input_amax: float,
+                                  input_unsign: bool,
+                                  output_bit: int,
+                                  output_amax: float = None,
+                                  output_unsign: bool = False,
+                                  narrow: bool = False) -> bool:
     """Check whether the output of quant_cls is correct
 
     Args:
@@ -50,14 +50,14 @@ def __check_symmetric_quant(quant_cls: _SymmetryQuantTable,
     return (quant_output == ground_truth_quant_output).all()
 
 
-def _check_symmetric_quant(quant_cls: _SymmetryQuantTable,
-                           float_func: Callable,
-                           input_bit_range: Tuple[int],
-                           input_amax_range: Tuple[float],
-                           input_unsign_range: Tuple[bool],
-                           output_bit_range: Tuple[int],
-                           output_amax_range: Tuple[float],
-                           output_unsign_range: Tuple[bool] = (False,)):
+def _check_symmetric_quant_table(quant_cls: _SymmetryQuantTable,
+                                 float_func: Callable,
+                                 input_bit_range: Tuple[int],
+                                 input_amax_range: Tuple[float],
+                                 input_unsign_range: Tuple[bool],
+                                 output_bit_range: Tuple[int],
+                                 output_amax_range: Tuple[float],
+                                 output_unsign_range: Tuple[bool] = (False,)):
     for _ in range(100):
         for input_bit in input_bit_range:
             for input_amax in input_amax_range:
@@ -66,15 +66,12 @@ def _check_symmetric_quant(quant_cls: _SymmetryQuantTable,
                         for output_amax in output_amax_range:
                             for output_unsign in output_unsign_range:
                                 for narrow in (True, False):
-                                    if not __check_symmetric_quant(quant_cls, float_func, input_bit, input_amax,
-                                                                   input_unsign, output_bit, output_amax, output_unsign,
-                                                                   narrow):
-
-                                        r = __check_symmetric_quant(quant_cls, float_func, input_bit, input_amax,
-                                                                    input_unsign, output_bit, output_amax,
-                                                                    output_unsign, narrow)
+                                    if not __check_symmetric_quant_table(quant_cls, float_func, input_bit, input_amax,
+                                                                         input_unsign, output_bit, output_amax,
+                                                                         output_unsign, narrow):
                                         print(f'input_bit = {input_bit}, input_amax = {input_amax}, input_unsign = {input_unsign}, '\
-                                              f'output_bit = {output_bit}, output_amax = {output_amax}, output_unsign = {output_unsign}, narrow = {narrow} is FAIL!')
+                                              f'output_bit = {output_bit}, output_amax = {output_amax}, output_unsign = {output_unsign}, '\
+                                              f'narrow = {narrow} is FAIL!')
                                         return False
 
     return True
@@ -84,25 +81,25 @@ class TestActivation(unittest.TestCase):
 
     def test_sigmoid(self):
         self.assertEqual(
-            _check_symmetric_quant(quant_cls=Sigmoid,
-                                   float_func=torch.sigmoid,
-                                   input_bit_range=(8, 4),
-                                   input_amax_range=(4, 5, 6, 7, 8),
-                                   input_unsign_range=(False, True),
-                                   output_bit_range=(8, 4),
-                                   output_amax_range=(0.5, 1, 1.5, None),
-                                   output_unsign_range=(True, False)), True)
+            _check_symmetric_quant_table(quant_cls=Sigmoid,
+                                         float_func=torch.sigmoid,
+                                         input_bit_range=(8, 4),
+                                         input_amax_range=(4, 5, 6, 7, 8),
+                                         input_unsign_range=(False, True),
+                                         output_bit_range=(8, 4),
+                                         output_amax_range=(0.5, 1, 1.5, None),
+                                         output_unsign_range=(True, False)), True)
 
     def test_tanh(self):
         self.assertEqual(
-            _check_symmetric_quant(quant_cls=TanH,
-                                   float_func=torch.tanh,
-                                   input_bit_range=(8, 4),
-                                   input_amax_range=(2, 3, 4, 5, 6),
-                                   input_unsign_range=(False, True),
-                                   output_bit_range=(8, 4),
-                                   output_amax_range=(0.5, 1, 1.5, None),
-                                   output_unsign_range=(False,)), True)
+            _check_symmetric_quant_table(quant_cls=TanH,
+                                         float_func=torch.tanh,
+                                         input_bit_range=(8, 4),
+                                         input_amax_range=(2, 3, 4, 5, 6),
+                                         input_unsign_range=(False, True),
+                                         output_bit_range=(8, 4),
+                                         output_amax_range=(0.5, 1, 1.5, None),
+                                         output_unsign_range=(False,)), True)
 
 
 if __name__ == '__main__':

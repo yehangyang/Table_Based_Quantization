@@ -1,5 +1,6 @@
 import unittest
 from typing import Callable, Tuple
+from tqdm import tqdm
 
 import torch
 from quantized.module import utils
@@ -58,7 +59,7 @@ def _check_symmetric_quant_table(quant_cls: _SymmetryQuantTable,
                                  output_bit_range: Tuple[int],
                                  output_amax_range: Tuple[float],
                                  output_unsign_range: Tuple[bool] = (False,)):
-    for _ in range(100):
+    for _ in tqdm(range(100), desc=f'Testing {quant_cls}'):
         for input_bit in input_bit_range:
             for input_amax in input_amax_range:
                 for input_unsign in input_unsign_range:
@@ -135,7 +136,7 @@ def _check_symmetric_quant_table_softmax(dim_len_range: Tuple[int],
                                          output_bit_range: Tuple[int],
                                          output_amax_range: Tuple[float],
                                          output_unsign_range: Tuple[bool] = (False,)):
-    for dim_len in range(dim_len_range[0], dim_len_range[1]):
+    for dim_len in tqdm(range(dim_len_range[0], dim_len_range[1]), desc=f'Testing {Softmax}'):
         for input_bit in input_bit_range:
             for input_amax in input_amax_range:
                 for input_unsign in input_unsign_range:

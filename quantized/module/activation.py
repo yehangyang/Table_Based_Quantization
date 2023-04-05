@@ -93,11 +93,9 @@ class Softmax(torch.nn.Module):
                  output_bit: int,
                  output_amax: float,
                  output_unsign: bool = True,
-                 inner_bit: int = 16,
+                 acc_bit: int = 16,
                  narrow: bool = False,
-                 dim: int = None,
-                 *args,
-                 **kwargs) -> None:
+                 dim: int = None) -> None:
         super().__init__()
 
         assert (input_bit <= 8)
@@ -114,53 +112,38 @@ class Softmax(torch.nn.Module):
         input_float_minus_max = self.input_qconfig.dequantize(input_quant_minus_max)
         exp_float = torch.exp(input_float_minus_max)
 
-        acc_quant_max = quant_max(bit=inner_bit, unsign=False)
+        acc_quant_max = quant_max(bit=acc_bit, unsign=False)
 
         # denominator
-        """
-        denominator_allowed_max_quant_exp_x_minus_max / self.output_qconfig.scale <= acc_quant_max
-        denominator_allowed_max_quant_exp_x_minus_max * self._dim_len <= acc_quant_max
-        """
-        denominator_allowed_min_scale = min(1 / self._dim_len, self.output_qconfig.scale)
-        denominator_allowed_max_quant_exp_x_minus_max = acc_quant_max * denominator_allowed_min_scale
-        denominator_allowed_max_quant_exp_x_minus_max = int(denominator_allowed_max_quant_exp_x_minus_max)
-        # max_float_exp_x_minus_max = 1.0
-        denominator_allowed_min_scale = 1.0 / denominator_allowed_max_quant_exp_x_minus_max
-        self.denominator_qconfig = QuantConfig(bit=inner_bit,
-                                               narrow=False,
-                                               unsign=False,
-                                               scale=denominator_allowed_min_scale)
-        # (exp_float) -> Q -> (denominator_quant)
-        denominator_quant = self.denominator_qconfig.quantize(exp_float)
+        denominator_scale = 1 / (acc_quant_max // dim_len)  # denominator allowed min quant scale
+        self.denominator_element_qconfig = QuantConfig(bit=acc_bit, narrow=False, unsign=False, scale=denominator_scale)
+        # (exp_float) -> Q -> (denominator_element_quant)
+        denominator_element_quant = self.denominator_element_qconfig.quantize(exp_float)
 
         # numerator
-        numerator_hoped_max_quant_exp_x_minus_max = int(denominator_allowed_max_quant_exp_x_minus_max /
-                                                        self.output_qconfig.scale)
-        # max_float_exp_x_minus_max = 1.0
-        numerator_conservative_scale = 1.0 / numerator_hoped_max_quant_exp_x_minus_max
-        self.numerator_qconfig = QuantConfig(bit=inner_bit,
-                                             narrow=False,
-                                             unsign=False,
-                                             scale=numerator_conservative_scale)
+        numerator_bit = acc_bit + output_bit
+        numerator_scale = denominator_scale * self.output_qconfig.scale
+        self.numerator_qconfig = QuantConfig(bit=numerator_bit, narrow=False, unsign=False, scale=numerator_scale)
         # (exp_float) -> Q -> (numerator_quant)
         numerator_quant = self.numerator_qconfig.quantize(exp_float)
 
         # adjust sequence of output_quant for easier retrieve
         if input_unsign:
-            self._denominator_table = denominator_quant
+            self._denominator_element_table = denominator_element_quant
             self._numerator_table = numerator_quant
         else:
             index = self.input_qconfig.quant_max if narrow else self.input_qconfig.quant_max + 1
-            self._denominator_table = torch.cat((denominator_quant[index:], denominator_quant[:index]))
+            self._denominator_element_table = torch.cat(
+                (denominator_element_quant[index:], denominator_element_quant[:index]))
             self._numerator_table = torch.cat((numerator_quant[index:], numerator_quant[:index]))
 
     def forward(self, x: torch.Tensor):
-        denominator = self._denominator_table[x.to(torch.int64)]
-        denominator_sum = torch.sum(denominator, dim=self._dim)
+        denominator_element = self._denominator_element_table[x.to(torch.int64)]
+        denominator = torch.sum(denominator_element, dim=self._dim)
 
         numerator = self._numerator_table[x.to(torch.int64)]
 
-        y = numerator / denominator_sum
+        y = numerator / denominator
         y = torch.clamp(y, self.output_qconfig.quant_min, self.output_qconfig.quant_max)
         y = y.to(self.output_qconfig.dtype)
         return y

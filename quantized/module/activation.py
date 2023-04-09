@@ -29,6 +29,7 @@ class _SymmetryQuantTable(torch.nn.Module):
         """
         super().__init__()
         assert (input_bit <= 8)
+        narrow=True
 
         # (input_quant) -> DQ -> (input_float)
         self.input_qconfig = QuantConfig(bit=input_bit, narrow=narrow, unsign=input_unsign, amax=input_amax)
@@ -91,16 +92,17 @@ class TanHHalfTable(torch.nn.Module):
                  input_unsign: bool,
                  output_bit: int,
                  output_amax: float = None,
+                 narrow: bool = False,
                  *args,
                  **kwargs) -> None:
         super().__init__()
         assert (input_bit <= 8)
-        narrow = True
 
         # (input_quant) -> DQ -> (input_float)
         self.input_qconfig = QuantConfig(bit=input_bit, narrow=narrow, unsign=input_unsign, amax=input_amax)
-        input_quant_positive = torch.arange(0, self.input_qconfig.quant_max + 1, dtype=self.input_qconfig.dtype)
-
+        input_quant_positive = torch.arange(0,
+                                            self.input_qconfig.quant_max + (1 if narrow else 2),
+                                            dtype=self.input_qconfig.dtype if narrow else torch.int16)
         input_float_positive = self.input_qconfig.dequantize(input_quant_positive)
 
         # (input_float) -> float_func -> Q -> (output_quant)
@@ -185,3 +187,9 @@ class Softmax(torch.nn.Module):
         y = torch.clamp(y, self.output_qconfig.quant_min, self.output_qconfig.quant_max)
         y = y.to(self.output_qconfig.dtype)
         return y
+
+
+# self.output_qconfig.scale
+# 0.003937007874015748
+# self.input_qconfig.scale
+# 0.015748031496062992

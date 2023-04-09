@@ -4,7 +4,7 @@ from tqdm import tqdm
 
 import torch
 from quantized.module import utils
-from quantized.module.activation import _SymmetryQuantTable, Sigmoid, TanH, Softmax
+from quantized.module.activation import _SymmetryQuantTable, Sigmoid, TanH, TanHHalfTable, Softmax
 
 
 def __check_symmetric_quant_table(quant_cls: _SymmetryQuantTable,
@@ -172,6 +172,17 @@ class TestActivation(unittest.TestCase):
     def test_tanh(self):
         self.assertEqual(
             _check_symmetric_quant_table(quant_cls=TanH,
+                                         float_func=torch.tanh,
+                                         input_bit_range=(8, 4),
+                                         input_amax_range=(2, 3, 4, 5, 6),
+                                         input_unsign_range=(False, True),
+                                         output_bit_range=(8, 4),
+                                         output_amax_range=(0.5, 1, 1.5, None),
+                                         output_unsign_range=(False,)), True)
+
+    def test_tanh_half_table(self):
+        self.assertEqual(
+            _check_symmetric_quant_table(quant_cls=TanHHalfTable,
                                          float_func=torch.tanh,
                                          input_bit_range=(8, 4),
                                          input_amax_range=(2, 3, 4, 5, 6),

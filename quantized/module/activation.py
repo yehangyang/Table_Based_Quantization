@@ -83,6 +83,44 @@ class TanH(_SymmetryQuantTable):
         super().__init__(torch.tanh, input_bit, input_amax, input_unsign, output_bit, output_amax, False, narrow)
 
 
+class TanHHalfTable(torch.nn.Module):
+
+    def __init__(self,
+                 input_bit: int,
+                 input_amax: float,
+                 input_unsign: bool,
+                 output_bit: int,
+                 output_amax: float = None,
+                 *args,
+                 **kwargs) -> None:
+        super().__init__()
+        assert (input_bit <= 8)
+        narrow = True
+
+        # (input_quant) -> DQ -> (input_float)
+        self.input_qconfig = QuantConfig(bit=input_bit, narrow=narrow, unsign=input_unsign, amax=input_amax)
+        input_quant_positive = torch.arange(0, self.input_qconfig.quant_max + 1, dtype=self.input_qconfig.dtype)
+
+        input_float_positive = self.input_qconfig.dequantize(input_quant_positive)
+
+        # (input_float) -> float_func -> Q -> (output_quant)
+        output_float_positive = torch.tanh(input_float_positive)
+        output_amax = output_amax if output_amax else torch.absolute(output_float_positive).max()
+        self.output_qconfig = QuantConfig(bit=output_bit, narrow=narrow, unsign=False, amax=output_amax)
+        output_quant_positive = self.output_qconfig.quantize(output_float_positive)
+
+        self._table = output_quant_positive
+
+    def forward(self, x: torch.Tensor):
+        y = torch.zeros_like(x, dtype=self.output_qconfig.dtype)
+        positive_mask = x >= 0
+        y[positive_mask] = self._table[x[positive_mask].to(torch.int64)]
+
+        negative_mask = x < 0
+        y[negative_mask] = -self._table[(-x[negative_mask]).to(torch.int64)]
+        return y
+
+
 class Softmax(torch.nn.Module):
 
     def __init__(self,

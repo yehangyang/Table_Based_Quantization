@@ -1,0 +1,228 @@
+<svg host="65bd71144e" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="602px" height="361px" viewBox="-0.5 -0.5 602 361" content="&lt;mxfile&gt;&lt;diagram id=&quot;eSwIctWH0G0ZQbutE6Zh&quot; name=&quot;Page-1&quot;&gt;7Vpbb5swFP41ltpJm7gHHkNCtpc9TJ209ilyYgesAk4d0yT79TNgboFovVDaVOQhsT/7GNvnfB8HB6DPosN3BrfBT4pwCDQFHYA+B5pmKrb4ToFjDuiamQM+IyiH1Aq4IX+xBBWJJgThXaMjpzTkZNsE1zSO8Zo3MMgY3Te7bWjYvOoW+rgF3Kxh2Eb/EMSDHLW1SYX/wMQPiiurlpO3RLDoLFeyCyCi+xqke0CfMUp5XooOMxyme1fsS263ONNaTozhmD/JQFrs+LFYHEZirbJKGQ+oT2MYehXqBjwKRaMqivhA+G2tfCfKyjdT1uapw5WiciwqMWfH23qlZpVWK7OsVtmhaeo8UV2FdH3/OyBxDi9IWExoxxm9L70i9tPNF5iu6uweFZtAE7aWvTQZVpD5WPZySv+IuMY0wmJyogvDIeTksTk6lBHml/0qJ4iC9EO3T+SlH2GYyEGBZoViEi4ijylrIIdfQ3iPl4hAn8FoKeKci8UsMSKcsmXaITO0HpI0kFzOxEhlTZT89JfE24Qvd1lYizBJDZQcgxE8pJCYsaY8JFAMnSH5LAScTSQfpRU/jCYxwkg6bR8Qjm+2MNvXvVCDZvxshOdmNKQss9U3G2yt16Ubay1o4qyUdMCNWGsNV7JPOY8Orz5ixvGhBrVduK9IrBmSmUGNwAX2Gq+q2uUwrU2iJ3HvZUzT349p+kBMe5tRc2JmjC35C0wJR8I/2qxBX3N+jsFvzmtkYhsZXby2tZVuWeX1WmTtCJ92YMg0wpY0HYTORj90rih8V2v5H50rBt81CPwB6Gy06WwORGfjoul8SaNuQgpPpacpR1/KZEImGM9RnndSqVdnHy9TL2mgW1KWjk2VGkTNzJ7U7CXJifqBkxOzrWaq0u3G3uXMHOVsUDmjCa/rWUzjkMQYsqua2l2PQvZsIVOtIZXMGpWsU8msd1Qya1SygUbNNezkUEeCzzvVGQXtrKANm5rZrxS0S3honLTFyR5ImyajNg16XnWSZZ2mXpk4NVXsAvRpmPMtTRlQd+yRFwONyuGqdrMGngWmCnCdtGDPwdTLTlIQPpRdEhLzq9pxyzXwFsCdAXsGPBu4CrD11NgxgWuUt/qKYp4Dpipwp8Az0297MVKspJiutSlW3v57v7Xr/TyrfLq/hJx2OmAMlA44Ldmb/+o1ji1jYtmTdsK6yT5d8a2rhm4a/aSy5X8k5w8Z3yyRnYxP5p3RXrzVUg/3yUDhXly7Fu+fOdy7Mqie4l1Uq9d2srbau0+69w8=&lt;/diagram&gt;&lt;/mxfile&gt;">
+    <defs/>
+    <g>
+        <path d="M 240 20 L 250 20 Q 260 20 260 30 L 260 50 Q 260 60 264.88 60 L 269.76 60" fill="none" stroke="rgb(0, 0, 0)" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 277.76 60 L 269.76 62.67 L 269.76 57.33 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-width="2" stroke-miterlimit="10" pointer-events="all"/>
+        <rect x="0" y="0" width="240" height="40" fill="#ffe6cc" stroke="#d79b00" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 238px; height: 1px; padding-top: 20px; margin-left: 1px;">
+                        <div data-drawio-colors="color: #000000; " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                <div data-lake_diagram_content_editor_data="true">
+                                    input_scale = input_amax / quant_max
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="120" y="24" fill="#000000" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    input_scale = input_amax / quant_max
+                </text>
+            </switch>
+        </g>
+        <path d="M 240 100 L 250 100 Q 260 100 260 90 L 260 70 Q 260 60 264.88 60 L 269.76 60" fill="none" stroke="rgb(0, 0, 0)" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 277.76 60 L 269.76 62.67 L 269.76 57.33 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-width="2" stroke-miterlimit="10" pointer-events="all"/>
+        <rect x="0" y="80" width="240" height="40" fill="#d5e8d4" stroke="#82b366" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 238px; height: 1px; padding-top: 100px; margin-left: 1px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                <div data-lake_diagram_content_editor_data="true">
+                                    <div data-lake_diagram_content_editor_data="true">
+                                        quant_input = [quant_min, quant_max]
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="120" y="104" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    quant_input = [quant_min, quant_max]
+                </text>
+            </switch>
+        </g>
+        <path d="M 480 80 L 480 149.76" fill="none" stroke="rgb(0, 0, 0)" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 480 157.76 L 477.33 149.76 L 482.67 149.76 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-width="2" stroke-miterlimit="10" pointer-events="all"/>
+        <rect x="360" y="40" width="240" height="40" fill="#ffe6cc" stroke="#d79b00" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 238px; height: 1px; padding-top: 60px; margin-left: 361px;">
+                        <div data-drawio-colors="color: #000000; " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                <div data-lake_diagram_content_editor_data="true">
+                                    <div data-lake_diagram_content_editor_data="true">
+                                        <div data-lake_diagram_content_editor_data="true">
+                                            <div data-lake_diagram_content_editor_data="true">
+                                                float_input = quant_input * input_scale
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="480" y="64" fill="#000000" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    float_input = quant_input * input_scale
+                </text>
+            </switch>
+        </g>
+        <path d="M 360 180 L 350 180 Q 340 180 340 190 L 340 210 Q 340 220 335.12 220 L 330.24 220" fill="none" stroke="rgb(0, 0, 0)" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 322.24 220 L 330.24 217.33 L 330.24 222.67 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-width="2" stroke-miterlimit="10" pointer-events="all"/>
+        <rect x="360" y="160" width="240" height="40" fill="#ffe6cc" stroke="#d79b00" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 238px; height: 1px; padding-top: 180px; margin-left: 361px;">
+                        <div data-drawio-colors="color: #000000; " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                <div data-lake_diagram_content_editor_data="true">
+                                    <div data-lake_diagram_content_editor_data="true">
+                                        <div data-lake_diagram_content_editor_data="true">
+                                            <div data-lake_diagram_content_editor_data="true">
+                                                float_output = nonlinear(float_input)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="480" y="184" fill="#000000" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    float_output = nonlinear(float_input)
+                </text>
+            </switch>
+        </g>
+        <path d="M 360 260 L 350 260 Q 340 260 340 250 L 340 230 Q 340 220 335.12 220 L 330.24 220" fill="none" stroke="rgb(0, 0, 0)" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 322.24 220 L 330.24 217.33 L 330.24 222.67 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-width="2" stroke-miterlimit="10" pointer-events="all"/>
+        <rect x="360" y="240" width="240" height="40" fill="#ffe6cc" stroke="#d79b00" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 238px; height: 1px; padding-top: 260px; margin-left: 361px;">
+                        <div data-drawio-colors="color: #000000; " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                <div data-lake_diagram_content_editor_data="true">
+                                    <div data-lake_diagram_content_editor_data="true">
+                                        <div data-lake_diagram_content_editor_data="true">
+                                            <div data-lake_diagram_content_editor_data="true">
+                                                output_scale = output_amax / quant_max
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="480" y="264" fill="#000000" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    output_scale = output_amax / quant_max
+                </text>
+            </switch>
+        </g>
+        <path d="M 120 240 L 120 270 Q 120 280 130 280 L 170 280 Q 180 280 180 290 L 180 309.76" fill="none" stroke="rgb(0, 0, 0)" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 180 317.76 L 177.33 309.76 L 182.67 309.76 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-width="2" stroke-miterlimit="10" pointer-events="all"/>
+        <rect x="0" y="200" width="240" height="40" fill="#d5e8d4" stroke="#82b366" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 238px; height: 1px; padding-top: 220px; margin-left: 1px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                <div data-lake_diagram_content_editor_data="true">
+                                    <div data-lake_diagram_content_editor_data="true">
+                                        <div data-lake_diagram_content_editor_data="true">
+                                            <div data-lake_diagram_content_editor_data="true">
+                                                quant_output = float_output / output_scale
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="120" y="224" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    quant_output = float_output / output_sca...
+                </text>
+            </switch>
+        </g>
+        <rect x="0" y="320" width="360" height="40" fill="#d5e8d4" stroke="#82b366" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 358px; height: 1px; padding-top: 340px; margin-left: 1px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                <div data-lake_diagram_content_editor_data="true">
+                                    <div data-lake_diagram_content_editor_data="true">
+                                        <div data-lake_diagram_content_editor_data="true">
+                                            <div data-lake_diagram_content_editor_data="true">
+                                                table = 根据 index = uint(quant_input)，调整 quant_output 顺序
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="180" y="344" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    table = 根据 index = uint(quant_input)，调整 quant_output 顺序
+                </text>
+            </switch>
+        </g>
+        <path d="M 320 60 L 349.76 60" fill="none" stroke="rgb(0, 0, 0)" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 357.76 60 L 349.76 62.67 L 349.76 57.33 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-width="2" stroke-miterlimit="10" pointer-events="all"/>
+        <rect x="280" y="40" width="40" height="40" fill="#647687" stroke="#314354" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 60px; margin-left: 281px;">
+                        <div data-drawio-colors="color: #ffffff; " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(255, 255, 255); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                DQ
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="300" y="64" fill="#ffffff" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    DQ
+                </text>
+            </switch>
+        </g>
+        <path d="M 280 220 L 250.24 220" fill="none" stroke="rgb(0, 0, 0)" stroke-width="2" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 242.24 220 L 250.24 217.33 L 250.24 222.67 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-width="2" stroke-miterlimit="10" pointer-events="all"/>
+        <rect x="280" y="200" width="40" height="40" fill="#647687" stroke="#314354" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 220px; margin-left: 281px;">
+                        <div data-drawio-colors="color: #ffffff; " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(255, 255, 255); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+                                Q
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="300" y="224" fill="#ffffff" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    Q
+                </text>
+            </switch>
+        </g>
+    </g>
+    <switch>
+        <g requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"/>
+        <a transform="translate(0,-5)" xlink:href="https://www.diagrams.net/doc/faq/svg-export-text-problems" target="_blank">
+            <text text-anchor="middle" font-size="10px" x="50%" y="100%">
+                Text is not SVG - cannot display
+            </text>
+        </a>
+    </switch>
+</svg>

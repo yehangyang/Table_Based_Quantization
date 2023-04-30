@@ -1,4 +1,4 @@
-site_name: 基于查表的模型量化
+site_name: 查表法量化激活函数
 site_url: https://yehangyang.github.io/Table_Based_Quantization/
 
 repo_url: https://github.com/yehangyang/Table_Based_Quantization
@@ -61,5 +61,8 @@ plugins:
 
 # Page Tree
 nav:
-    - Home: index.md
-    - Appendix: appendix.md
+    - 主页: index.md
+    - 介绍:
+        - 术语介绍: introduce_term.md
+        - 方法介绍: introduce_method.md
+        - 查表法量化 Softmax: introduce_softmax.md

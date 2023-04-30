@@ -2,9 +2,7 @@
 comments: true
 ---
 
-# 附录
-
-## 量化术语
+# 量化术语
 
 * 大写字母表示整数 tensor
 * 小写字母表示浮点 tensor

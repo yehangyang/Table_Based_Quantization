@@ -37,6 +37,8 @@ theme:
         view: material/eye
         repo: fontawesome/brands/github
 
+    custom_dir: overrides
+
 markdown_extensions:
     - pymdownx.arithmatex:
           generic: true

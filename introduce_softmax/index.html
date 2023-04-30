@@ -1,0 +1,1053 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://yehangyang.github.io/Table_Based_Quantization/introduce_softmax/">
+      
+      
+        <link rel="prev" href="../introduce_method/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.8">
+    
+    
+      
+        <title>查表法量化 Softmax - 查表法量化激活函数</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ded33207.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.a0c5b2b5.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#softmax" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="查表法量化激活函数" class="md-header__button md-logo" aria-label="查表法量化激活函数" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            查表法量化激活函数
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              查表法量化 Softmax
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+            
+              <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+            
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+            
+              <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+              </label>
+            
+          
+        </form>
+      
+    
+    
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/yehangyang/Table_Based_Quantization" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Table_Based_Quantization
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href=".." class="md-tabs__link">
+      主页
+    </a>
+  </li>
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../introduce_term/" class="md-tabs__link md-tabs__link--active">
+        介绍
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="查表法量化激活函数" class="md-nav__button md-logo" aria-label="查表法量化激活函数" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    查表法量化激活函数
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/yehangyang/Table_Based_Quantization" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Table_Based_Quantization
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        主页
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          介绍
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          介绍
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../introduce_term/" class="md-nav__link">
+        术语介绍
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../introduce_method/" class="md-nav__link">
+        方法介绍
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          查表法量化 Softmax
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        查表法量化 Softmax
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    基本信息
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    数学推演
+  </a>
+  
+    <nav class="md-nav" aria-label="数学推演">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#max" class="md-nav__link">
+    消除 max
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    确定分母映射表
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    确定分子映射表
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    功能代码
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    测试代码
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    内存开销
+  </a>
+  
+    <nav class="md-nav" aria-label="内存开销">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    映射表
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    中间量
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    小结
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    基本信息
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    数学推演
+  </a>
+  
+    <nav class="md-nav" aria-label="数学推演">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#max" class="md-nav__link">
+    消除 max
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    确定分母映射表
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    确定分子映射表
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    功能代码
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    测试代码
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    内存开销
+  </a>
+  
+    <nav class="md-nav" aria-label="内存开销">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    映射表
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    中间量
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    小结
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+    <a href="https://github.com/yehangyang/Table_Based_Quantization/edit/main/docs/introduce_softmax.md" title="Edit this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="softmax">查表法量化 Softmax</h1>
+<h2 id="_1">基本信息</h2>
+<p>表达公式：<span class="arithmatex">\(y_i = \frac{e^{x_i}}{\sum_{i}^{n} e^{x_i}}\)</span></p>
+<p>函数曲线：没有固定曲线</p>
+<h2 id="_2">数学推演</h2>
+<h3 id="max">消除 max</h3>
+<p>计算 softmax 的第一步通常都是做如下这样一个等价变化，来保证求和时不会发生数据溢出，</p>
+<div class="arithmatex">\[
+y_i = \frac{e^{x_i}}{\sum_{i}^{n} e^{x_i}} = \frac{e^{x_i - offset}}{\sum_{i}^{n} e^{x_i-offset}}, offset = \max_{i \in n}(x_i)
+\]</div>
+<p>随后将问题拆解为如何得到 <span class="arithmatex">\(e^{x_i - \max_{i \in n}(x_i)}\)</span>。代入量化的表达式 <span class="arithmatex">\(x_i = scale_x X_i\)</span>，得，</p>
+<div class="arithmatex">\[
+e^{scale_x X_i - \max_{i \in n}(scale_x X_i)} = e^{scale_x(X_i - \max_{i \in n}(X_i))}
+\]</div>
+<p>对于 <span class="arithmatex">\(X\)</span>（量化 tensor）而言，</p>
+<div class="arithmatex">\[
+\max_{i \in n}(X_i) \le Q_{max}, i.e., scale_x \max_{i \in n}(X_i) \le scale_x Q_{max}
+\]</div>
+<p>于是将 <span class="arithmatex">\(offset\)</span> 设定为 <span class="arithmatex">\(scale_x Q_{max}\)</span>，等价变化仍然成立，同时避免求和时发生数据溢出。即，</p>
+<div class="arithmatex">\[
+y_i = \frac {e^{scale_x X_i - scale_x Q_{max}}}{\sum_{i}^{n}e^{scale_x X_i - scale_x Q_{max}}} = \frac {e^{scale_x (X_i - Q_{max})}} {\sum_{i}^{n} e^{scale_x (X_i - Q_{max})}}
+\]</div>
+<div class="arithmatex">\[
+t_i = e^{scale_x(X_i - Q_{max})}, t_i \in (0, 1)
+\]</div>
+<p>正如推演公式所示，这种方式可以省去求最大值的操作。</p>
+<h3 id="_3">确定分母映射表</h3>
+<p>我的目标是实现 softmax 的全量化，所以也会对 <span class="arithmatex">\(t_i\)</span> 做量化，在整数域进行计算。
+为了能实现对 <span class="arithmatex">\(t_i\)</span> 做量化，目前缺少的条件是 <span class="arithmatex">\(t_i\)</span> 输出的量化 <span class="arithmatex">\(scale\)</span> 值。于是这一小节将推演如何确定 <span class="arithmatex">\(t_i\)</span> 的输出量化 <span class="arithmatex">\(scale\)</span>。根据前面的推演，简化公式，并带入 <span class="arithmatex">\(t_i\)</span> 的量化表达 <span class="arithmatex">\(t_i = scale_t T_i\)</span>，化简如下，</p>
+<div class="arithmatex">\[
+y_i = \frac {t_i} {\sum_{i}^{n} t_i} = \frac {scale_t T_i} {\sum_{i}^{n} scale_t T_i} = \frac {T_i} {\sum_{i}^{n}T_i}
+\]</div>
+<p>至此证明 <span class="arithmatex">\(t_i\)</span> 的量化输出可以直接用于计算，i.e., 可以在整数域进行累加和除法操作。</p>
+<p>接下来要确定 <span class="arithmatex">\(scale_t\)</span> 的取值。在确定 <span class="arithmatex">\(scale_t\)</span> 的取值时，需要结合硬件的整数累加器来考虑。看到整数累加，通常会引起做量化同学的警惕。累加结果（包括中间结果）会被存到硬件的累加器（<span class="arithmatex">\(acc\)</span>）中。而累加器位宽（<span class="arithmatex">\(bit_{acc}\)</span>）通常都是固定的。位宽固定，累加的上限也就确定，令其为 <span class="arithmatex">\(Q_{acc}^{max} = 2^{bit_{acc} - 1} - 1\)</span>，在 softmax 这个场景中，甚至可以用无符号表示，因为 <span class="arithmatex">\(T\)</span> 肯定大于零。<span class="arithmatex">\(T\)</span> 的每个元素值大小是千变万化的，<span class="arithmatex">\(T\)</span> 的元素个数 <span class="arithmatex">\(n\)</span> 是可以确定的。根据 <span class="arithmatex">\(Q_{acc}^{max}\)</span> 和 <span class="arithmatex">\(n\)</span>，可以作以下约束，</p>
+<div class="arithmatex">\[
+\max_{i \in n}(T_i) n \le Q_{acc}^{max}
+\]</div>
+<div class="arithmatex">\[
+\max_{i \in n}(T_i) \le \frac {Q_{acc}^{max}} {n}
+\]</div>
+<p>为了充分利用 <span class="arithmatex">\(acc\)</span> 的每个 <span class="arithmatex">\(bit\)</span> 位，令</p>
+<div class="arithmatex">\[
+\max_{i \in n}(T_i) =\left \lfloor  \frac {Q_{acc}^{max}} {n} \right \rfloor
+\]</div>
+<p>由前面的推理 <span class="arithmatex">\(t_i \in (0, 1)\)</span>，根据计算量化公式，<span class="arithmatex">\(scale = \frac {F_{max}} {Q_{max}}\)</span>，可得，</p>
+<div class="arithmatex">\[
+scale_t = \frac {\max_{i \in n}(t_i)} {\max_{i \in n}(T_i)} = \frac {1} {\max_{i \in n}(T_i)}
+\]</div>
+<p>就此确定分母中 <span class="arithmatex">\(T\)</span> 的量化缩放因子 <span class="arithmatex">\(scale_t = \frac {1} {\max_{i \in n}T_i}\)</span>。并且 <span class="arithmatex">\(\frac {1} {\max_{i \in n}T_i}\)</span> 是允许的最小 <span class="arithmatex">\(scale_t\)</span>，如果 <span class="arithmatex">\(scale_t &gt; \frac {1} {\max_{i \in n}T_i}\)</span>，就存在 <span class="arithmatex">\(acc\)</span> 溢出的风险。</p>
+<p>综上，</p>
+<div class="arithmatex">\[
+scale_t = \frac {1} {\max_{i \in n}T_i} = \frac {1} {\left \lfloor  \frac {Q_{acc}^{max}} {n} \right \rfloor}
+\]</div>
+<p>所以只要确定 <span class="arithmatex">\(acc\)</span> 的位宽 <span class="arithmatex">\(bit_{acc}\)</span>（用来确定 <span class="arithmatex">\(Q_{acc}^{max}\)</span>）和元素个数 <span class="arithmatex">\(n\)</span>，就能确定分母中 <span class="arithmatex">\(T\)</span> 的缩放因子 <span class="arithmatex">\(scale_t\)</span>。至此的公式推演可以支撑实现 X -&gt; T 的查表实现。</p>
+<h3 id="_4">确定分子映射表</h3>
+<p>首先回到简化公式，<span class="arithmatex">\(y_i = \frac {T_i} {\sum_{i \in n} T_i}\)</span>，带入量化表达 <span class="arithmatex">\(y_i = scale_y Y_i\)</span> 得，</p>
+<div class="arithmatex">\[
+y_i = scale_y Y_i = \frac {T_i} {\sum_{i \in n} T_i}
+\]</div>
+<div class="arithmatex">\[
+Y_i = \frac { \frac {T_i} {scale_y} } {\sum_{i \in n} T_i}
+\]</div>
+<p>因为 <span class="arithmatex">\(y_i \in (0, 1)\)</span>，所以 <span class="arithmatex">\(scale_y &lt; 1\)</span>。如果 <span class="arithmatex">\(\frac {T_i} {scale_y}\)</span> 只保留整数相当于又做了一次量化（第一次是 <span class="arithmatex">\(T_i = \frac {t_i} {scale_t}\)</span>）。于是需要确定用多大位宽来存放 <span class="arithmatex">\(\frac {T_i} {scale_y}\)</span>，可以保证不发生溢出问题。</p>
+<p>因为 <span class="arithmatex">\(\max_{i \in n}y \in [\frac {1} {n}, 1)\)</span> 当 <span class="arithmatex">\(n = 1\)</span> 时, <span class="arithmatex">\(\max_{i \in n} y_i = 1\)</span> 即 <span class="arithmatex">\(\min(\max_{i \in n}y_i) = \frac {1} {n}\)</span></p>
+<p>再结合 <span class="arithmatex">\(scale_y = \frac { \max_{i \in n} y} {Q_{output}^{max}}\)</span> 可得，</p>
+<div class="arithmatex">\[
+\min(scale_y) = \frac {\min(\max_{i \in n}y)} {Q_{output}^{max}} = \frac {1} {n Q_{output}^{max}}
+\]</div>
+<p>于是，</p>
+<div class="arithmatex">\[
+\max( \frac {T_i} {scale_y}) = \frac {\max_{i \in n}T_i} {\min(scale_y)} = \frac {Q_{acc}^{max}} {n} n Q_{output}^{max} = Q_{acc}^{max} Q_{output}^{max}
+\]</div>
+<p>等式的推论是，分子 <span class="arithmatex">\(\frac {T_i} {scale_y}\)</span> 需要位宽 <span class="arithmatex">\(bit_{acc} + bit_{output}\)</span> 来存放，这样可以完全避免溢出问题。将之前的等式重新梳理一下，</p>
+<div class="arithmatex">\[
+Y_i = \frac { \frac {T_i} {scale_y}} {\sum_{i}^{n}T_i} = \frac { \frac {t_i} {scale_t scale_y}} {\sum_{i}^{n} T_i} = \frac {P_i} {\sum_{i}^{n}T_i}
+\]</div>
+<p>其中 <span class="arithmatex">\(P_i = \frac {t_i} {scale_t scale_y}\)</span>，也就是将两次量化等效为一次。说等效其实不合适，因为两次并一次，可以减少一次 round 误差。至此的公式推演可以支撑实现 X -&gt; P 的查表实现。</p>
+<h2 id="_5">功能代码</h2>
+<p>根据等式关系，</p>
+<div class="arithmatex">\[
+Y_i = \frac {P_i} {\sum_{i}^{n}T_i}
+\]</div>
+<div class="arithmatex">\[
+P_i = \left \lfloor \frac {t_i} {scale_t scale_y} \right \rfloor
+\]</div>
+<div class="arithmatex">\[
+T_i = \left \lfloor \frac {t_i} {scale_t} \right \rfloor
+\]</div>
+<div class="arithmatex">\[
+t_i = e^{scale_x (X_i - Q_{input}^{max})}
+\]</div>
+<div class="arithmatex">\[
+scale_t = \frac {1} {\max_{i \in n} T_i} = \frac {1} {\left \lfloor \frac {Q_{acc}^{max}} {n} \right \rfloor}
+\]</div>
+<p>可以设计两个映射表分别是 X -&gt; T 和 X -&gt; P，其中 <span class="arithmatex">\(X\)</span> 用 <span class="arithmatex">\(bit_{input}\)</span> 位宽存放，<span class="arithmatex">\(T\)</span> 与 <span class="arithmatex">\(acc\)</span> 保持一致用 <span class="arithmatex">\(bit_{acc}\)</span> 位宽存放，<span class="arithmatex">\(P\)</span> 用 <span class="arithmatex">\(bit_{acc} + bit_{output}\)</span> 位宽存放。</p>
+<p>代码地址</p>
+<div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-0-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-0-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-0-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-0-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-0-10">10</a></span>
+<span class="normal"><a href="#__codelineno-0-11">11</a></span>
+<span class="normal"><a href="#__codelineno-0-12">12</a></span>
+<span class="normal"><a href="#__codelineno-0-13">13</a></span>
+<span class="normal"><a href="#__codelineno-0-14">14</a></span>
+<span class="normal"><a href="#__codelineno-0-15">15</a></span>
+<span class="normal"><a href="#__codelineno-0-16">16</a></span>
+<span class="normal"><a href="#__codelineno-0-17">17</a></span>
+<span class="normal"><a href="#__codelineno-0-18">18</a></span>
+<span class="normal"><a href="#__codelineno-0-19">19</a></span>
+<span class="normal"><a href="#__codelineno-0-20">20</a></span>
+<span class="normal"><a href="#__codelineno-0-21">21</a></span>
+<span class="normal"><a href="#__codelineno-0-22">22</a></span>
+<span class="normal"><a href="#__codelineno-0-23">23</a></span>
+<span class="normal"><a href="#__codelineno-0-24">24</a></span>
+<span class="normal"><a href="#__codelineno-0-25">25</a></span>
+<span class="normal"><a href="#__codelineno-0-26">26</a></span>
+<span class="normal"><a href="#__codelineno-0-27">27</a></span>
+<span class="normal"><a href="#__codelineno-0-28">28</a></span>
+<span class="normal"><a href="#__codelineno-0-29">29</a></span>
+<span class="normal"><a href="#__codelineno-0-30">30</a></span>
+<span class="normal"><a href="#__codelineno-0-31">31</a></span>
+<span class="normal"><a href="#__codelineno-0-32">32</a></span>
+<span class="normal"><a href="#__codelineno-0-33">33</a></span>
+<span class="normal"><a href="#__codelineno-0-34">34</a></span>
+<span class="normal"><a href="#__codelineno-0-35">35</a></span>
+<span class="normal"><a href="#__codelineno-0-36">36</a></span>
+<span class="normal"><a href="#__codelineno-0-37">37</a></span>
+<span class="normal"><a href="#__codelineno-0-38">38</a></span>
+<span class="normal"><a href="#__codelineno-0-39">39</a></span>
+<span class="normal"><a href="#__codelineno-0-40">40</a></span>
+<span class="normal"><a href="#__codelineno-0-41">41</a></span>
+<span class="normal"><a href="#__codelineno-0-42">42</a></span>
+<span class="normal"><a href="#__codelineno-0-43">43</a></span>
+<span class="normal"><a href="#__codelineno-0-44">44</a></span>
+<span class="normal"><a href="#__codelineno-0-45">45</a></span>
+<span class="normal"><a href="#__codelineno-0-46">46</a></span>
+<span class="normal"><a href="#__codelineno-0-47">47</a></span>
+<span class="normal"><a href="#__codelineno-0-48">48</a></span>
+<span class="normal"><a href="#__codelineno-0-49">49</a></span>
+<span class="normal"><a href="#__codelineno-0-50">50</a></span>
+<span class="normal"><a href="#__codelineno-0-51">51</a></span>
+<span class="normal"><a href="#__codelineno-0-52">52</a></span>
+<span class="normal"><a href="#__codelineno-0-53">53</a></span>
+<span class="normal"><a href="#__codelineno-0-54">54</a></span>
+<span class="normal"><a href="#__codelineno-0-55">55</a></span>
+<span class="normal"><a href="#__codelineno-0-56">56</a></span>
+<span class="normal"><a href="#__codelineno-0-57">57</a></span>
+<span class="normal"><a href="#__codelineno-0-58">58</a></span>
+<span class="normal"><a href="#__codelineno-0-59">59</a></span>
+<span class="normal"><a href="#__codelineno-0-60">60</a></span>
+<span class="normal"><a href="#__codelineno-0-61">61</a></span>
+<span class="normal"><a href="#__codelineno-0-62">62</a></span>
+<span class="normal"><a href="#__codelineno-0-63">63</a></span>
+<span class="normal"><a href="#__codelineno-0-64">64</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="k">class</span> <span class="nc">Softmax</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4"></a>                 <span class="n">dim_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5"></a>                 <span class="n">input_bit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6"></a>                 <span class="n">input_amax</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7"></a>                 <span class="n">input_unsign</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8"></a>                 <span class="n">output_bit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9"></a>                 <span class="n">output_amax</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10"></a>                 <span class="n">output_unsign</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11"></a>                 <span class="n">acc_bit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12"></a>                 <span class="n">narrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13"></a>                 <span class="n">dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14"></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15"></a>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16"></a>        <span class="k">assert</span> <span class="p">(</span><span class="n">input_bit</span> <span class="o">&lt;=</span> <span class="mi">8</span><span class="p">)</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17"></a>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_dim</span> <span class="o">=</span> <span class="n">dim</span> <span class="k">if</span> <span class="n">dim</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_dim_len</span> <span class="o">=</span> <span class="n">dim_len</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20"></a>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">input_qconfig</span> <span class="o">=</span> <span class="n">QuantConfig</span><span class="p">(</span><span class="n">bit</span><span class="o">=</span><span class="n">input_bit</span><span class="p">,</span> <span class="n">narrow</span><span class="o">=</span><span class="n">narrow</span><span class="p">,</span> <span class="n">unsign</span><span class="o">=</span><span class="n">input_unsign</span><span class="p">,</span> <span class="n">amax</span><span class="o">=</span><span class="n">input_amax</span><span class="p">)</span>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">output_qconfig</span> <span class="o">=</span> <span class="n">QuantConfig</span><span class="p">(</span><span class="n">bit</span><span class="o">=</span><span class="n">output_bit</span><span class="p">,</span> <span class="n">narrow</span><span class="o">=</span><span class="n">narrow</span><span class="p">,</span> <span class="n">unsign</span><span class="o">=</span><span class="n">output_unsign</span><span class="p">,</span> <span class="n">amax</span><span class="o">=</span><span class="n">output_amax</span><span class="p">)</span>
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23"></a>
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24"></a>        <span class="c1"># (input_quant) -&gt; minus_max -&gt; DQ -&gt; float_func -&gt; (exp_float)</span>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25"></a>        <span class="n">input_quant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_qconfig</span><span class="o">.</span><span class="n">range</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26"></a>        <span class="n">input_quant_minus_max</span> <span class="o">=</span> <span class="n">input_quant</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_qconfig</span><span class="o">.</span><span class="n">quant_max</span>
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27"></a>        <span class="n">input_float_minus_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_qconfig</span><span class="o">.</span><span class="n">dequantize</span><span class="p">(</span><span class="n">input_quant_minus_max</span><span class="p">)</span>
+</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28"></a>        <span class="n">exp_float</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">input_float_minus_max</span><span class="p">)</span>
+</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29"></a>
+</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30"></a>        <span class="n">acc_quant_max</span> <span class="o">=</span> <span class="n">quant_max</span><span class="p">(</span><span class="n">bit</span><span class="o">=</span><span class="n">acc_bit</span><span class="p">,</span> <span class="n">unsign</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31"></a>
+</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32"></a>        <span class="c1"># denominator</span>
+</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33"></a>        <span class="n">denominator_scale</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">acc_quant_max</span> <span class="o">//</span> <span class="n">dim_len</span><span class="p">)</span>  <span class="c1"># denominator allowed min quant scale</span>
+</span><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">denominator_element_qconfig</span> <span class="o">=</span> <span class="n">QuantConfig</span><span class="p">(</span><span class="n">bit</span><span class="o">=</span><span class="n">acc_bit</span><span class="p">,</span> <span class="n">narrow</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unsign</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">denominator_scale</span><span class="p">)</span>
+</span><span id="__span-0-35"><a id="__codelineno-0-35" name="__codelineno-0-35"></a>        <span class="c1"># (exp_float) -&gt; Q -&gt; (denominator_element_quant)</span>
+</span><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36"></a>        <span class="n">denominator_element_quant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">denominator_element_qconfig</span><span class="o">.</span><span class="n">quantize</span><span class="p">(</span><span class="n">exp_float</span><span class="p">)</span>
+</span><span id="__span-0-37"><a id="__codelineno-0-37" name="__codelineno-0-37"></a>
+</span><span id="__span-0-38"><a id="__codelineno-0-38" name="__codelineno-0-38"></a>        <span class="c1"># numerator</span>
+</span><span id="__span-0-39"><a id="__codelineno-0-39" name="__codelineno-0-39"></a>        <span class="n">numerator_bit</span> <span class="o">=</span> <span class="n">acc_bit</span> <span class="o">+</span> <span class="n">output_bit</span>
+</span><span id="__span-0-40"><a id="__codelineno-0-40" name="__codelineno-0-40"></a>        <span class="n">numerator_scale</span> <span class="o">=</span> <span class="n">denominator_scale</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_qconfig</span><span class="o">.</span><span class="n">scale</span>
+</span><span id="__span-0-41"><a id="__codelineno-0-41" name="__codelineno-0-41"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">numerator_qconfig</span> <span class="o">=</span> <span class="n">QuantConfig</span><span class="p">(</span><span class="n">bit</span><span class="o">=</span><span class="n">numerator_bit</span><span class="p">,</span> <span class="n">narrow</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unsign</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">numerator_scale</span><span class="p">)</span>
+</span><span id="__span-0-42"><a id="__codelineno-0-42" name="__codelineno-0-42"></a>        <span class="c1"># (exp_float) -&gt; Q -&gt; (numerator_quant)</span>
+</span><span id="__span-0-43"><a id="__codelineno-0-43" name="__codelineno-0-43"></a>        <span class="n">numerator_quant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">numerator_qconfig</span><span class="o">.</span><span class="n">quantize</span><span class="p">(</span><span class="n">exp_float</span><span class="p">)</span>
+</span><span id="__span-0-44"><a id="__codelineno-0-44" name="__codelineno-0-44"></a>
+</span><span id="__span-0-45"><a id="__codelineno-0-45" name="__codelineno-0-45"></a>        <span class="c1"># adjust sequence of output_quant for easier retrieve</span>
+</span><span id="__span-0-46"><a id="__codelineno-0-46" name="__codelineno-0-46"></a>        <span class="k">if</span> <span class="n">input_unsign</span><span class="p">:</span>
+</span><span id="__span-0-47"><a id="__codelineno-0-47" name="__codelineno-0-47"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_denominator_element_table</span> <span class="o">=</span> <span class="n">denominator_element_quant</span>
+</span><span id="__span-0-48"><a id="__codelineno-0-48" name="__codelineno-0-48"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_numerator_table</span> <span class="o">=</span> <span class="n">numerator_quant</span>
+</span><span id="__span-0-49"><a id="__codelineno-0-49" name="__codelineno-0-49"></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="__span-0-50"><a id="__codelineno-0-50" name="__codelineno-0-50"></a>            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_qconfig</span><span class="o">.</span><span class="n">quant_max</span> <span class="k">if</span> <span class="n">narrow</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_qconfig</span><span class="o">.</span><span class="n">quant_max</span> <span class="o">+</span> <span class="mi">1</span>
+</span><span id="__span-0-51"><a id="__codelineno-0-51" name="__codelineno-0-51"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_denominator_element_table</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
+</span><span id="__span-0-52"><a id="__codelineno-0-52" name="__codelineno-0-52"></a>                <span class="p">(</span><span class="n">denominator_element_quant</span><span class="p">[</span><span class="n">index</span><span class="p">:],</span> <span class="n">denominator_element_quant</span><span class="p">[:</span><span class="n">index</span><span class="p">]))</span>
+</span><span id="__span-0-53"><a id="__codelineno-0-53" name="__codelineno-0-53"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_numerator_table</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">numerator_quant</span><span class="p">[</span><span class="n">index</span><span class="p">:],</span> <span class="n">numerator_quant</span><span class="p">[:</span><span class="n">index</span><span class="p">]))</span>
+</span><span id="__span-0-54"><a id="__codelineno-0-54" name="__codelineno-0-54"></a>
+</span><span id="__span-0-55"><a id="__codelineno-0-55" name="__codelineno-0-55"></a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+</span><span id="__span-0-56"><a id="__codelineno-0-56" name="__codelineno-0-56"></a>        <span class="n">denominator_element</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_denominator_element_table</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">)]</span>
+</span><span id="__span-0-57"><a id="__codelineno-0-57" name="__codelineno-0-57"></a>        <span class="n">denominator</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">denominator_element</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dim</span><span class="p">)</span>
+</span><span id="__span-0-58"><a id="__codelineno-0-58" name="__codelineno-0-58"></a>
+</span><span id="__span-0-59"><a id="__codelineno-0-59" name="__codelineno-0-59"></a>        <span class="n">numerator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numerator_table</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">)]</span>
+</span><span id="__span-0-60"><a id="__codelineno-0-60" name="__codelineno-0-60"></a>
+</span><span id="__span-0-61"><a id="__codelineno-0-61" name="__codelineno-0-61"></a>        <span class="n">y</span> <span class="o">=</span> <span class="n">numerator</span> <span class="o">/</span> <span class="n">denominator</span>
+</span><span id="__span-0-62"><a id="__codelineno-0-62" name="__codelineno-0-62"></a>        <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_qconfig</span><span class="o">.</span><span class="n">quant_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_qconfig</span><span class="o">.</span><span class="n">quant_max</span><span class="p">)</span>
+</span><span id="__span-0-63"><a id="__codelineno-0-63" name="__codelineno-0-63"></a>        <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_qconfig</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+</span><span id="__span-0-64"><a id="__codelineno-0-64" name="__codelineno-0-64"></a>        <span class="k">return</span> <span class="n">y</span>
+</span></code></pre></div></td></tr></table></div>
+<h2 id="_6">测试代码</h2>
+<p>代码地址</p>
+<p>测试代码和测试设计中提到的会有所不同。因为 Softmax 不是简单查表就能实现的，过程中存在累加和除法，所以存在无法避免的误差。在测试代码中，将量化输出的最大绝对值误差（max absolute error）限定在 1 以内（包括 1），也就是等价浮点输出误差在 output_quant_scale 以内，对应代码块 L19。</p>
+<div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-1-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-1-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-1-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-1-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-1-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-1-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-1-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-1-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-1-10">10</a></span>
+<span class="normal"><a href="#__codelineno-1-11">11</a></span>
+<span class="normal"><a href="#__codelineno-1-12">12</a></span>
+<span class="normal"><a href="#__codelineno-1-13">13</a></span>
+<span class="normal"><a href="#__codelineno-1-14">14</a></span>
+<span class="normal"><a href="#__codelineno-1-15">15</a></span>
+<span class="normal"><a href="#__codelineno-1-16">16</a></span>
+<span class="normal"><a href="#__codelineno-1-17">17</a></span>
+<span class="normal"><a href="#__codelineno-1-18">18</a></span>
+<span class="normal"><a href="#__codelineno-1-19">19</a></span>
+<span class="normal"><a href="#__codelineno-1-20">20</a></span>
+<span class="normal"><a href="#__codelineno-1-21">21</a></span>
+<span class="normal"><a href="#__codelineno-1-22">22</a></span>
+<span class="normal"><a href="#__codelineno-1-23">23</a></span>
+<span class="normal"><a href="#__codelineno-1-24">24</a></span>
+<span class="normal"><a href="#__codelineno-1-25">25</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="k">def</span> <span class="nf">_check_symmetric_quant_table_softmax</span><span class="p">(</span><span class="n">dim_len_range</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2"></a>                                         <span class="n">input_bit_range</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3"></a>                                         <span class="n">input_amax_range</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4"></a>                                         <span class="n">input_unsign_range</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">],</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5"></a>                                         <span class="n">output_bit_range</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6"></a>                                         <span class="n">output_amax_range</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7"></a>                                         <span class="n">output_unsign_range</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="kc">False</span><span class="p">,)):</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8"></a>    <span class="k">for</span> <span class="n">dim_len</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">dim_len_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dim_len_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Testing </span><span class="si">{</span><span class="n">Softmax</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">):</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9"></a>        <span class="k">for</span> <span class="n">input_bit</span> <span class="ow">in</span> <span class="n">input_bit_range</span><span class="p">:</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10"></a>            <span class="k">for</span> <span class="n">input_amax</span> <span class="ow">in</span> <span class="n">input_amax_range</span><span class="p">:</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11"></a>                <span class="k">for</span> <span class="n">input_unsign</span> <span class="ow">in</span> <span class="n">input_unsign_range</span><span class="p">:</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12"></a>                    <span class="k">for</span> <span class="n">output_bit</span> <span class="ow">in</span> <span class="n">output_bit_range</span><span class="p">:</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13"></a>                        <span class="k">for</span> <span class="n">output_amax</span> <span class="ow">in</span> <span class="n">output_amax_range</span><span class="p">:</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14"></a>                            <span class="k">for</span> <span class="n">output_unsign</span> <span class="ow">in</span> <span class="n">output_unsign_range</span><span class="p">:</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15"></a>                                <span class="k">for</span> <span class="n">narrow</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16"></a>                                    <span class="n">max_absolute_error</span> <span class="o">=</span> <span class="n">__check_symmetric_quant_table_softmax</span><span class="p">(</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17"></a>                                        <span class="n">dim_len</span><span class="p">,</span> <span class="n">input_bit</span><span class="p">,</span> <span class="n">input_amax</span><span class="p">,</span> <span class="n">input_unsign</span><span class="p">,</span> <span class="n">output_bit</span><span class="p">,</span> <span class="n">output_amax</span><span class="p">,</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18"></a>                                        <span class="n">output_unsign</span><span class="p">,</span> <span class="n">narrow</span><span class="p">)</span>
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19"></a>                                    <span class="k">if</span> <span class="n">max_absolute_error</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20"></a>                                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dim_len = </span><span class="si">{</span><span class="n">dim_len</span><span class="si">}</span><span class="s1">, input_bit = </span><span class="si">{</span><span class="n">input_bit</span><span class="si">}</span><span class="s1">, input_amax = </span><span class="si">{</span><span class="n">input_amax</span><span class="si">}</span><span class="s1">, input_unsign = </span><span class="si">{</span><span class="n">input_unsign</span><span class="si">}</span><span class="s1">, &#39;</span>\
+</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21"></a>                                                <span class="sa">f</span><span class="s1">&#39;output_bit = </span><span class="si">{</span><span class="n">output_bit</span><span class="si">}</span><span class="s1">, output_amax = </span><span class="si">{</span><span class="n">output_amax</span><span class="si">}</span><span class="s1">, output_unsign = </span><span class="si">{</span><span class="n">output_unsign</span><span class="si">}</span><span class="s1">, &#39;</span>\
+</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22"></a>                                                <span class="sa">f</span><span class="s1">&#39;narrow = </span><span class="si">{</span><span class="n">narrow</span><span class="si">}</span><span class="s1"> max_absolute_error is </span><span class="si">{</span><span class="n">max_absolute_error</span><span class="si">}</span><span class="s1">!&#39;</span><span class="p">)</span>
+</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23"></a>                                        <span class="k">return</span> <span class="kc">False</span>
+</span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24"></a>
+</span><span id="__span-1-25"><a id="__codelineno-1-25" name="__codelineno-1-25"></a>    <span class="k">return</span> <span class="kc">True</span>
+</span></code></pre></div></td></tr></table></div>
+<p>备注：测试代码中未添加 <span class="arithmatex">\(bit_{acc}\)</span> 的遍历测试。经手动调节 <span class="arithmatex">\(bit_{acc}\)</span> 大小发现，<span class="arithmatex">\(bit_{acc}\)</span> 越大，误差越小。<span class="arithmatex">\(bit_{acc}\)</span> 较小时，误差很大，测试无法通过。<span class="arithmatex">\(bit_{acc}\)</span> 足够大时，误差可以控制在允许范围内，测试能通过。此时 <span class="arithmatex">\(bit_{acc}\)</span> 再增大会发现，绝对值误差为 1 的数量会逐渐减少。有兴趣的朋友也可以试一下。究其原因，是 <span class="arithmatex">\(bit_{acc}\)</span> 位宽增大，保留了更多原来浮点数末尾的小数信息，保留的越多累加后的误差也就越小。</p>
+<h2 id="_7">内存开销</h2>
+<h3 id="_8">映射表</h3>
+<p>相较普通的浮点计算，Softmax 的量化查表实现，需要储存两张映射表。按照设定，</p>
+<ul>
+<li>量化输入比特位数：<span class="arithmatex">\(bit_{input}\)</span></li>
+<li>累加器比特位数：<span class="arithmatex">\(bit_{acc}\)</span></li>
+<li>量化输出比特位数：<span class="arithmatex">\(bit_{output}\)</span></li>
+</ul>
+<p>可以得到，</p>
+<ul>
+<li>X -&gt; T 映射表内存大小计算公式，<span class="arithmatex">\(2^{bit_{input}} bit_{acc} (bits) = \frac {2^{bit_{input}} bit_{acc}} {8} (Bytes)\)</span></li>
+<li>X -&gt; P 映射表内存大小计算公式，<span class="arithmatex">\(2^{bit_{input}} (bit_{acc} + bit_{output}) (bits)
+= \frac {2^{bit_{input}} (bit_{acc} + bit_{output})} {8} (Bytes)\)</span></li>
+</ul>
+<p>带入具体参数的具象感受如下表所示，</p>
+<table>
+<thead>
+<tr>
+<th><span class="arithmatex">\(bit_{input}\)</span></th>
+<th><span class="arithmatex">\(bit_{acc}\)</span></th>
+<th><span class="arithmatex">\(bit_{output}\)</span></th>
+<th>X -&gt; T(Bytes)</th>
+<th>X -&gt; P(Bytes)</th>
+<th>总和(Bytes)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8</td>
+<td>16</td>
+<td>8</td>
+<td>512</td>
+<td>768</td>
+<td>1280</td>
+</tr>
+<tr>
+<td>8</td>
+<td>32</td>
+<td>8</td>
+<td>1024</td>
+<td>1280</td>
+<td>2304</td>
+</tr>
+<tr>
+<td>4</td>
+<td>16</td>
+<td>4</td>
+<td>32</td>
+<td>40</td>
+<td>72</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_9">中间量</h3>
+<p>按照 Python 代码实现流程，会有两个中间变量分子 <span class="arithmatex">\(P\)</span> 和分母 <span class="arithmatex">\(\sum_{i}^{n}T_i\)</span>。抛开 Python 的代码实现（Python 代码只体现了量化的实现），转而思考 C/C++ 的代码优化（或者硬件设计的优化）。</p>
+<ul>
+<li>首先讨论 <span class="arithmatex">\(\sum_{i}^{n}T_i\)</span> 的优化过程。通常的做法是，在求和前将累加器清零。逐个元素查表得到 <span class="arithmatex">\(T_i\)</span> 并累加到累加器上。这样无需提供暂存 tensor。</li>
+<li>再来讨论 <span class="arithmatex">\(P\)</span> 的优化过程。得到 <span class="arithmatex">\(\sum_{i}^{n}T_i\)</span> 之后，逐个元素查表得到 <span class="arithmatex">\(P_i\)</span> 并计算 <span class="arithmatex">\(\frac {P_i} {\sum_{i}^{n}T_i} = Y_i\)</span>。这样也无需提供暂存 tensor。</li>
+</ul>
+<p>综上所述，无需为中间量提供大内存。</p>
+<h2 id="_10">小结</h2>
+<p>量化 Softmax 带来额外的内存消耗来自两个映射表，且内存消耗在可接受范围内（以 <span class="arithmatex">\(bit_{input} = 8,bit_{acc} = 32,bit_{output} = 8\)</span> 为例，相当于引入了一个大小为 [N, C, H, W] = [64, 32, 3, 3] 的 int8 卷积核）。</p>
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      Last update:
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">April 30, 2023</span>
+      
+        <br>
+        Created:
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">April 30, 2023</span>
+      
+    
+  </small>
+</div>
+
+
+
+
+
+<h2 id="__comments">Comments</h2>
+
+<script
+    src="https://giscus.app/client.js"
+    data-repo="yehangyang/Table_Based_Quantization"
+    data-repo-id="R_kgDOIMEfOA"
+    data-category="Announcements"
+    data-category-id="DIC_kwDOIMEfOM4CWJmr"
+    data-mapping="title"
+    data-strict="1"
+    data-reactions-enabled="1"
+    data-emit-metadata="1"
+    data-input-position="top"
+    data-theme="preferred_color_scheme"
+    data-lang="zh-CN"
+    data-loading="lazy"
+    crossorigin="anonymous"
+    async
+></script>
+
+<!-- Synchronize Giscus theme with palette -->
+<script>
+    var giscus = document.querySelector("script[src*=giscus]");
+
+    /* Set palette on initial load */
+    var palette = __md_get("__palette");
+    if (palette && typeof palette.color === "object") {
+        var theme = palette.color.scheme === "slate" ? "dark" : "light";
+        giscus.setAttribute("data-theme", theme);
+    }
+
+    /* Register event handlers after documented loaded */
+    document.addEventListener("DOMContentLoaded", function () {
+        var ref = document.querySelector("[data-md-component=palette]");
+        ref.addEventListener("change", function () {
+            var palette = __md_get("__palette");
+            if (palette && typeof palette.color === "object") {
+                var theme = palette.color.scheme === "slate" ? "dark" : "light";
+
+                /* Instruct Giscus to change theme */
+                var frame = document.querySelector(".giscus-frame");
+                frame.contentWindow.postMessage(
+                    { giscus: { setConfig: { theme } } },
+                    "https://giscus.app"
+                );
+            }
+        });
+    });
+</script>
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "content.code.copy", "content.code.select", "content.code.annotate", "content.action.edit"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.51198bba.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

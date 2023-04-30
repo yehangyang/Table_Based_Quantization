@@ -1,6 +1,10 @@
 site_name: 基于查表的模型量化
 site_url: https://yehangyang.github.io/Table_Based_Quantization/
 
+repo_url: https://github.com/yehangyang/Table_Based_Quantization
+repo_name: Table_Based_Quantization
+edit_uri: edit/main/docs/
+
 theme:
     name: material
     palette:
@@ -26,6 +30,12 @@ theme:
         - content.code.copy
         - content.code.select
         - content.code.annotate
+        - content.action.edit
+
+    icon:
+        edit: material/pencil
+        view: material/eye
+        repo: fontawesome/brands/github
 
 markdown_extensions:
     - pymdownx.arithmatex:
@@ -42,6 +52,10 @@ extra_javascript:
     - javascripts/mathjax.js
     - https://polyfill.io/v3/polyfill.min.js?features=es6
     - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+plugins:
+    - git-revision-date-localized:
+          enable_creation_date: true
 
 # Page Tree
 nav:

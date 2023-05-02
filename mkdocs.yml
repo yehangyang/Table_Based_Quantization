@@ -66,3 +66,4 @@ nav:
         - 术语介绍: introduce_term.md
         - 方法介绍: introduce_method.md
         - 查表法量化 Softmax: introduce_softmax.md
+        - 查表法量化 TanH: introduce_tanh.md
